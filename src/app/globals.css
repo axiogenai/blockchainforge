@@ -1057,21 +1057,12 @@ select option {
   margin-top: 4rem;
   padding: 2rem 0;
   border-top: 1px solid var(--border);
+  text-align: center;
 }
 
 .footer-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
   color: var(--text-muted);
   font-size: 0.85rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.footer-built-with .heart {
-  color: #ef4444;
 }
 
 /* ──────────────────────────────────────────────────────────────
@@ -1433,4 +1424,25 @@ pre[class*="language-"] {
 
 code[class*="language-"] {
   background: transparent !important;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   Footer
+   ────────────────────────────────────────────────────────────── */
+
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem 0;
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
 }
