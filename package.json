@@ -8,6 +8,9 @@
     "start": "next start",
     "lint": "eslint"
   },
+    "dependencies": {
+    "next-auth": "^4.24.7",
+  },
   "dependencies": {
     "@types/prismjs": "^1.26.6",
     "jszip": "^3.10.1",
