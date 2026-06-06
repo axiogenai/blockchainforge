@@ -1057,12 +1057,21 @@ select option {
   margin-top: 4rem;
   padding: 2rem 0;
   border-top: 1px solid var(--border);
-  text-align: center;
 }
 
 .footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
   color: var(--text-muted);
   font-size: 0.85rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-built-with .heart {
+  color: #ef4444;
 }
 
 /* ──────────────────────────────────────────────────────────────
