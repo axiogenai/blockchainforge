@@ -7,6 +7,7 @@ import {
   Link as LinkIcon, Diamond, Image as ImageIcon, 
   ShieldCheck, BookOpen, Blocks
 } from 'lucide-react';
+import { signIn, signOut, useSession } from 'next-auth/react';
 
 import Prism from 'prismjs';
 import 'prismjs/components/prism-go';
@@ -32,6 +33,7 @@ const FEATURES = [
 ];
 
 export default function Home() {
+  const { data: session } = useSession();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -43,7 +45,6 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('app.go');
 
   // GitHub state
-  const [githubToken, setGithubToken] = useState('');
   const [pushing, setPushing] = useState(false);
   const [githubUrl, setGithubUrl] = useState('');
 
@@ -161,8 +162,8 @@ export default function Home() {
 
   const handleGithubPush = async (e: React.MouseEvent) => {
     e.preventDefault();
-    if (!githubToken) {
-      setError('Please enter a GitHub Personal Access Token to push directly.');
+    if (!session) {
+      setError('Please sign in with GitHub to push directly.');
       return;
     }
     setPushing(true);
@@ -172,7 +173,7 @@ export default function Home() {
       const response = await fetch('/api/github', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: githubToken, formData }),
+        body: JSON.stringify({ formData }),
       });
       
       const data = await response.json();
@@ -370,22 +371,31 @@ export default function Home() {
                       <div className="export-actions">
                         <h3 className="export-title">Export Options</h3>
                         
-                        <div className="form-group">
-                          <label>GitHub Personal Access Token (Optional)</label>
-                          <input 
-                            type="password" 
-                            placeholder="ghp_xxxxxxxxxxxx" 
-                            value={githubToken} 
-                            onChange={e => setGithubToken(e.target.value)} 
-                          />
-                          <p className="input-hint">Requires 'repo' scope to create and push to a new repository.</p>
-                        </div>
+                        {!session ? (
+                          <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                            <p className="input-hint" style={{ marginBottom: '1rem' }}>Sign in with GitHub to instantly deploy your blockchain to a new repository.</p>
+                            <button type="button" className="btn btn-secondary" onClick={() => signIn('github')} style={{ width: '100%' }}>
+                              <GitBranch size={18} /> Sign in with GitHub
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(0,0,0,0.2)', padding: '10px 15px', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                              <img src={session.user?.image || ''} alt="avatar" style={{ width: 32, height: 32, borderRadius: '50%' }} />
+                              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <span style={{ color: 'var(--foreground)', fontSize: '0.9rem', fontWeight: 600 }}>{session.user?.name}</span>
+                                <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>Connected</span>
+                              </div>
+                              <button type="button" className="btn btn-secondary" onClick={() => signOut()} style={{ padding: '0.3rem 0.6rem', fontSize: '0.8rem', marginLeft: 'auto' }}>Sign out</button>
+                            </div>
+                          </div>
+                        )}
                         
                         <div className="action-buttons">
                           <button type="submit" className="btn btn-secondary" disabled={loading || pushing}>
                             {loading ? <><div className="loading-spinner" /> Zipping...</> : <><Download size={18} /> Download .zip</>}
                           </button>
-                          <button type="button" className="btn btn-primary" onClick={handleGithubPush} disabled={loading || pushing || !githubToken}>
+                          <button type="button" className="btn btn-primary" onClick={handleGithubPush} disabled={loading || pushing || !session}>
                             {pushing ? <><div className="loading-spinner" /> Pushing...</> : <><GitBranch size={18} /> Push to GitHub</>}
                           </button>
                         </div>
